@@ -87,9 +87,14 @@ class TasksController extends Controller
         // idの値でユーザを検索して取得
         $task = Task::findOrFail($id);
 
-        return view('tasks.show', [
+        if (\Auth::id() === $task->user_id) {
+            return view('tasks.show', [
             'task' => $task,
         ]);
+        }else{
+            //welcomeページを表示する
+             return view('welcome');
+        }
     }
 
     /**
@@ -102,9 +107,14 @@ class TasksController extends Controller
     {
         $task = Task::findOrFail($id);
 
-        return view('tasks.edit', [
+        if (\Auth::id() === $task->user_id) {
+            return view('tasks.edit', [
             'task' => $task,
         ]);
+        }else{
+            //welcomeページを表示する
+             return view('welcome');
+        }
     }
 
     /**
@@ -139,8 +149,11 @@ class TasksController extends Controller
     {
          // idの値で投稿を検索して取得
         $task = Task::findOrFail($id);
-        $task->delete();
-
-        return redirect('/');
+        if (\Auth::id() === $task->user_id) {
+            $task->delete();
+        }else{
+            //welcomeページを表示する
+             return view('welcome');
+        }
     }
 }

@@ -47,6 +47,6 @@ class User extends Authenticatable
     
     public function loadRelationshipCounts()
     {
-        $this->loadCount('tasks');
+        $this->loadCount('task');
     }
 }
