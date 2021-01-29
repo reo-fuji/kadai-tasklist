@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use App\Task;
+use App\User;
 
 class TasksController extends Controller
 {
@@ -15,11 +15,28 @@ class TasksController extends Controller
      */
     public function index()
     {
-        $tasks = Task::all();
+        $data = [];
+        //もしログインしてたら
+        if (\Auth::check()) { // 認証済みの場合
+            // 認証済みユーザを取得
+            $user = \Auth::user();
+            // ユーザの投稿の一覧を作成日時の降順で取得
+            // （後のChapterで他ユーザの投稿も取得するように変更しますが、現時点ではこのユーザの投稿のみ取得します）
+            $tasks = $user->tasks()->orderBy('created_at', 'desc')->paginate(10);
 
-        return view('tasks.index', [
-            'tasks' => $tasks,
-        ]);
+            $data = [
+                'user' => $user,
+                'tasks' => $tasks,
+            ];
+            return view('tasks.index', $data);
+            
+            //もしログインしてなかったら
+        }else
+        {
+            //welcomeページを表示する
+             return view('welcome');
+            
+        }
     }
 
     /**
@@ -49,11 +66,13 @@ class TasksController extends Controller
             'status' => 'required|max:10'
         ]);
         
-        $task = new Task;
-        $task->status = $request->status;
-        $task->content = $request->content;
-        $task->save();
+        // 認証済みユーザ（閲覧者）の投稿として作成（リクエストされた値をもとに作成）
+        $request->user()->tasks()->create([
+            'content' => $request->content,
+            'status' => $request->status,
+        ]);
 
+        // 前のURLへリダイレクトさせる
         return redirect('/');
     }
 
@@ -65,6 +84,7 @@ class TasksController extends Controller
      */
     public function show($id)
     {
+        // idの値でユーザを検索して取得
         $task = Task::findOrFail($id);
 
         return view('tasks.show', [
@@ -117,6 +137,7 @@ class TasksController extends Controller
      */
     public function destroy($id)
     {
+         // idの値で投稿を検索して取得
         $task = Task::findOrFail($id);
         $task->delete();
 
