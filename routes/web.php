@@ -20,6 +20,8 @@ Route::get('logout', 'Auth\LoginController@logout')->name('logout.get');
 
 Route::get('/', 'TasksController@index');
 
+Auth::routes(['verify' => true]);
+
 Route::group(['middleware' => ['auth']], function () {
     Route::resource('tasks', 'TasksController');
 });
