@@ -151,6 +151,8 @@ class TasksController extends Controller
         $task = Task::findOrFail($id);
         if (\Auth::id() === $task->user_id) {
             $task->delete();
+            
+            return redirect('/');
         }else{
             //welcomeページを表示する
              return view('welcome');
