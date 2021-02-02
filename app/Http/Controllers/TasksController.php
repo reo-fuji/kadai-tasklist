@@ -92,8 +92,7 @@ class TasksController extends Controller
             'task' => $task,
         ]);
         }else{
-            //welcomeページを表示する
-             return view('welcome');
+            return redirect('/');
         }
     }
 
@@ -112,8 +111,7 @@ class TasksController extends Controller
             'task' => $task,
         ]);
         }else{
-            //welcomeページを表示する
-             return view('welcome');
+            return redirect('/');
         }
     }
 
@@ -154,8 +152,7 @@ class TasksController extends Controller
             
             return redirect('/');
         }else{
-            //welcomeページを表示する
-             return view('welcome');
+            return redirect('/');
         }
     }
 }
